@@ -75,11 +75,17 @@ function App() {
         ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
         if (detections.length > 0) {
-          const sortedExpressions = Object.entries(detections[0].expressions).sort(
+          const largestFace = detections.reduce((prev, current) => {
+            const prevArea = prev.detection.box.width * prev.detection.box.height;
+            const currentArea = current.detection.box.width * current.detection.box.height;
+            return currentArea > prevArea ? current : prev;
+          });
+
+          const sortedExpressions = Object.entries(largestFace.expressions).sort(
             (a, b) => b[1] - a[1]
           );
           setEmotion(sortedExpressions[0][0]);
-          setExpressions(detections[0].expressions as unknown as Record<string, number>);
+          setExpressions(largestFace.expressions as unknown as Record<string, number>);
 
           const resizedDetections = faceapi.resizeResults(detections, displaySize);
           faceapi.draw.drawDetections(canvasRef.current, resizedDetections);

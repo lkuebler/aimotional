@@ -28,3 +28,4 @@ This is a purely client-side, real-time web application that uses the device's w
 - **DON'T** remove the `playsInline` or `webkit-playsinline` attributes from the video tags, as they are critical for iOS mobile support.
 - **DO** test responsiveness on all newly added components. The layout must be fluid (flex column on mobile, row on desktop).
 - **DO NOT** modify the `.github/workflows/pages.yml` file unless explicitly asked, as it is carefully configured to use `npm ci` and deploy the `/dist` directory to GitHub Pages.
+- **DO** always add and commit changes to git immediately after making functional updates to the codebase.
