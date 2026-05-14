@@ -87,8 +87,37 @@ function App() {
           setEmotion(sortedExpressions[0][0]);
           setExpressions(largestFace.expressions as unknown as Record<string, number>);
 
+          const largestFaceIndex = detections.indexOf(largestFace);
           const resizedDetections = faceapi.resizeResults(detections, displaySize);
-          faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+          
+          const ctx = canvasRef.current.getContext('2d');
+          if (ctx) {
+            resizedDetections.forEach((det, i) => {
+              const isLargest = i === largestFaceIndex;
+              const box = det.detection.box;
+              const color = isLargest ? 'rgba(0, 0, 255, 1)' : 'rgba(173, 216, 230, 0.5)';
+              
+              ctx.strokeStyle = color;
+              ctx.lineWidth = 2;
+              ctx.strokeRect(box.x, box.y, box.width, box.height);
+              
+              const scoreText = `${Math.round(det.detection.score * 100)}%`;
+              ctx.font = '16px Arial';
+              const textWidth = ctx.measureText(scoreText).width;
+              
+              ctx.save();
+              // Translate to the box's right edge (which is the left edge visually because of the CSS flip)
+              ctx.translate(box.x + box.width, box.y - 5);
+              ctx.scale(-1, 1); // Un-flip the canvas locally for the text
+              
+              ctx.fillStyle = color;
+              ctx.fillRect(0, -16, textWidth + 8, 20);
+              ctx.fillStyle = 'white';
+              ctx.fillText(scoreText, 4, -2);
+              
+              ctx.restore();
+            });
+          }
         } else {
           setEmotion('neutral');
           setExpressions({});
