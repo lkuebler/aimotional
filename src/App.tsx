@@ -13,6 +13,16 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState(false);
 
+  const [smoothing, setSmoothing] = useState(5);
+  const smoothingRef = useRef(5);
+  const expressionsHistory = useRef<Record<string, number>[]>([]);
+
+  const handleSmoothingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    setSmoothing(val);
+    smoothingRef.current = val;
+  };
+
   useEffect(() => {
     const loadModels = async () => {
       try {
@@ -81,11 +91,25 @@ function App() {
             return currentArea > prevArea ? current : prev;
           });
 
-          const sortedExpressions = Object.entries(largestFace.expressions).sort(
+          const currentExpressions = largestFace.expressions as unknown as Record<string, number>;
+          expressionsHistory.current.push(currentExpressions);
+
+          while (expressionsHistory.current.length > smoothingRef.current) {
+            expressionsHistory.current.shift();
+          }
+
+          const avgExpressions: Record<string, number> = {};
+          const keys = Object.keys(currentExpressions);
+          for (const key of keys) {
+            const sum = expressionsHistory.current.reduce((acc, curr) => acc + (curr[key] || 0), 0);
+            avgExpressions[key] = sum / expressionsHistory.current.length;
+          }
+
+          const sortedExpressions = Object.entries(avgExpressions).sort(
             (a, b) => b[1] - a[1]
           );
           setEmotion(sortedExpressions[0][0]);
-          setExpressions(largestFace.expressions as unknown as Record<string, number>);
+          setExpressions(avgExpressions);
 
           const largestFaceIndex = detections.indexOf(largestFace);
           const resizedDetections = faceapi.resizeResults(detections, displaySize);
@@ -121,6 +145,7 @@ function App() {
         } else {
           setEmotion('neutral');
           setExpressions({});
+          expressionsHistory.current = [];
         }
       } catch (e) {
         console.error(e);
@@ -230,6 +255,22 @@ function App() {
                     </div>
                   ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {isModelLoaded && !error && (
+          <div className="mt-8 pt-6 border-t border-white/20">
+            <div className="flex flex-col md:flex-row items-center gap-4 text-sm">
+              <span className="font-semibold whitespace-nowrap min-w-[150px]">Smoothing: {smoothing} frames</span>
+              <input 
+                type="range" 
+                min="1" 
+                max="20" 
+                value={smoothing}
+                onChange={handleSmoothingChange}
+                className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-white"
+              />
             </div>
           </div>
         )}
