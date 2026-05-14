@@ -5,75 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Live Emotion Analysis</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="app.css" />
-    <!-- Load face-api.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js"></script>
-    <!-- Load Lucide icons script -->
-    <script src="https://unpkg.com/lucide@latest"></script>
   </head>
   <body>
-    <div id="app" class="app-container theme-neutral">
-      <div class="glass-panel">
-        <header class="header">
-          <div class="header-title">
-            <i data-lucide="camera"></i>
-            <h1>Emotion Analysis</h1>
-          </div>
-          <button id="info-btn" class="icon-button" aria-label="About the Model">
-            <i data-lucide="info"></i>
-          </button>
-        </header>
-
-        <div id="loading-state" class="loading-state">
-          <div class="spinner"></div>
-          <p>Loading AI Models...</p>
-        </div>
-
-        <div id="error-state" class="error-message" style="display: none;">
-          <i data-lucide="refresh-ccw" class="spin" style="width: 48px; height: 48px;"></i>
-          <p id="error-text">An error occurred.</p>
-        </div>
-
-        <div id="main-content" class="main-content" style="display: none;">
-          <div class="video-wrapper">
-            <video id="webcam-video" class="webcam-video" autoplay muted playsinline webkit-playsinline></video>
-            <canvas id="webcam-canvas" class="webcam-canvas"></canvas>
-          </div>
-
-          <div class="dashboard">
-            <div class="primary-emotion">
-              <span id="primary-emoji" class="emoji">😐</span>
-              <h2 id="primary-text">Neutral</h2>
-            </div>
-            
-            <div id="metrics-container" class="metrics">
-              <!-- Metrics will be injected here by JS -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Info Modal -->
-    <div id="info-modal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>About the AI Models</h2>
-          <button id="close-modal-btn" class="icon-button"><i data-lucide="x"></i></button>
-        </div>
-        <div class="modal-body">
-          <p>This application uses on-device machine learning to analyze your facial expressions in real-time. No data is ever sent to a server—everything happens directly in your browser!</p>
-          
-          <div class="model-tech">
-            <h3>Powered by <a href="https://github.com/vladmandic/face-api" target="_blank">face-api.js</a></h3>
-            <ul>
-              <li><strong>TinyFaceDetector:</strong> A highly performant, lightweight model for real-time face detection.</li>
-              <li><strong>FaceExpressionNet:</strong> A neural network trained to recognize 7 basic emotional expressions.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <script src="app.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
